@@ -1,46 +1,58 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./component/Login";
-import FetchData from "./component/FetchData";
 import Signup from "./component/Signup";
+import FetchData from "./component/FetchData";
 import Home from "./component/Home";
 import AdminHome from "./admin/AdminHome";
+import BookNow from "./component/BookNow";
+import ProtectedRoute from "./component/common/ProtectRoute";
 
 function App() {
-  const user = JSON.parse(localStorage.getItem("loggedin-user"));
-
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          {!user && (
-            <>
-              <Route path="/" element={<Login />}></Route>
-              <Route path="/login" element={<Login />}></Route>
-              <Route path="/signup" element={<Signup />} />
-            </>
-          )}
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-          {user?.role === "User" && (
-            <>
-              {" "}
-              <Route path="/getdata" element={<FetchData />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/" element={<Home />} />
-            </>
-          )}
-          {user?.role === "Admin" && (
-            <>
-              <Route excat="/home" path="/home" element={<AdminHome />} />
-              <Route path="/" element={<AdminHome />} />
-            </>
-          )}
-        </Routes>
-      </BrowserRouter>
-    </>
+        {/* Protected User Routes */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute allowedRoles={["User"]}>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/getdata"
+          element={
+            <ProtectedRoute allowedRoles={["User"]}>
+              <FetchData />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booknow"
+          element={
+            <ProtectedRoute allowedRoles={["User"]}>
+              <BookNow />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Admin Route */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminHome />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

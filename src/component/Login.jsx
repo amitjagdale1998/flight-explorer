@@ -1,6 +1,8 @@
 import React from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUserCredentials, userSlice } from "./redux/slice/userSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,16 +18,21 @@ const Login = () => {
     if (matchedUser) {
       console.log(matchedUser);
       localStorage.setItem("loggedin-user", JSON.stringify(matchedUser));
-      navigate("/home");
       message.success("Login Successful!");
+      if (matchedUser?.role === "User") {
+        navigate("/home");
+      } else {
+        navigate("/admin");
+      }
     } else {
+      navigate("/login");
       message.error("Invalid email or password!");
     }
   };
 
   const onFinish = (values) => {
     console.log("Success:", values);
-    handleLogin(values); // directly call login with the submitted values
+    handleLogin(values);
   };
 
   const onFinishFailed = (errorInfo) => {

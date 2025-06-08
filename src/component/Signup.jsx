@@ -1,21 +1,46 @@
 import React from "react";
 import { Button, Form, Input, message, Select } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { increment, userSlice } from "./redux/slice/userSlice";
 const { Option } = Select;
 const key = "amitjagdale";
-const userStore = [];
+
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.userCredentials);
+  console.log(user, "user list");
 
   const onFinish = (values) => {
     console.log("Success:", values);
+
     if (values.email && values.password && values.role) {
-      //   const encryptedPAssword = sha256(values?.password).toString();
-      userStore.push({
-        email: values.email,
-        password: values.password,
-        role: values.role,
+      const matchedReduxUser = user?.find((item) => {
+        return item.email === values.email;
       });
+      if (matchedReduxUser) {
+        message.error("User is existing!");
+        return;
+      }
+      //   const encryptedPAssword = sha256(values?.password).toString();
+      const oldUser = JSON.parse(localStorage.getItem("user"));
+      const userStore = [
+        ...oldUser,
+        {
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        },
+      ];
+      dispatch(
+        increment({
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        })
+      );
+
       localStorage.setItem("user", JSON.stringify(userStore));
       message.success("Register sucessfully!");
       navigate("/login");

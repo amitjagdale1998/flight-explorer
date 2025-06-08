@@ -3,6 +3,7 @@ import { Button, Form, Input, message, Select } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { increment, userSlice } from "./redux/slice/userSlice";
+import CryptoJS from "crypto-js";
 const { Option } = Select;
 const key = "amitjagdale";
 
@@ -25,11 +26,13 @@ const Signup = () => {
       }
       //   const encryptedPAssword = sha256(values?.password).toString();
       const oldUser = JSON.parse(localStorage.getItem("user"));
+      const encryptedPassword = CryptoJS.AES.encrypt(values.password, key).toString();
+
       const userStore = [
         ...oldUser,
         {
           email: values.email,
-          password: values.password,
+          password: encryptedPassword,
           role: values.role,
         },
       ];

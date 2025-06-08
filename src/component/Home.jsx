@@ -132,12 +132,22 @@ const Home = () => {
       setTableData(filterDate);
     }
   };
-
+function Logout()
+{
+  localStorage.removeItem("loggedin-user")
+  navigate("/login")
+}
   return (
     <div className=" m-10">
-      <div className=" text-[20px] flex justify-center font-bold">
+      <div className="flex justify-between items-center mx-20">
+      <div className=" text-[20px] flex justify-center items-center text-centers w-[90%] font-bold">
         Flight Details
       </div>
+      <Button className=" text-[20px] flex justify-center font-bold" onClick={Logout}>
+        Logout
+      </Button>
+      </div>
+      
       <DatePickerFilter setSelectedDate={setSelectedDate} />
       <Table
         columns={columns}
